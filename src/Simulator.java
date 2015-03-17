@@ -34,6 +34,7 @@ public class Simulator {
 	int cycles = Integer.parseInt(args[3]);
 	String outfn = args[4];
 	boolean isRank = args[5].equals("yes") ? true : false;
+	
 
 	sim.readFile(infn);
 
@@ -47,7 +48,7 @@ public class Simulator {
 		System.out.println("Run #" + i);
 		// run simulation
 		if (type.equals("ra")) {
-		    sim.raSim(cycles, isRank);
+		    sim.raSim(cycles);
 		} else if (type.equals("ca")) {
 		    sim.caSim(cycles, isRank);
 		} else {
@@ -95,7 +96,7 @@ public class Simulator {
 	}
     }
 
-    public void raSim(int cycles, boolean isRank) {
+    public void raSim(int cycles) {
 	Utility.raSimulation(cycles, eleList, ruleList, eleMap);
     }
     
