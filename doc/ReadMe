@@ -136,6 +136,9 @@ Even if these variables were unused in rules, one can still toggle the variable.
 #4 Probabilities
 
 Only ra supports probabilities function. The probability should go after the semicolon or “{“ if grouped rules are used.
+There are two types of probabilities. In version 1 (implemented): each rule has some probability (rate) and we sample 
+the rules based on the probability. In version 2 (haven't implemented): Same element might have multiple rules with different
+probabilities and we choose one based on the probability.
 
 NOTE: every rule must have probability 
 
