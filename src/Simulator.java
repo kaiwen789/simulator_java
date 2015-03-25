@@ -12,6 +12,8 @@ public class Simulator {
     List<ExecRules> ruleList;
     Map<String, Element> eleMap;
     Map<Integer, List<ExecRules>> rankRuleLst;
+    List <Double> accProb; // accumulated probabilities 
+    List <ExecRules> orderRuleLst; // a list of ExecRules which is align to accProb
 
     public Simulator() {
 	eleList = new ArrayList<Element>();
@@ -22,22 +24,39 @@ public class Simulator {
 
     public static void main(String[] args) {
 
-	if (args.length != 6) {
-	    System.out
-		    .println("Usage: java Simulator <input file> <type: ra | ca> <runs> <cycle> <output file> <isRank>"); //TODO add isRank
+	if (args.length < 7) {
+	    System.out.println(
+		    "Usage: java Simulator [input file] [type: ra|ca] [runs] [cycle] [output file] [isRank] [probability version] [output mode]");
 	    return;
 	}
 	Simulator sim = new Simulator();
 	String infn = args[0];
-	String type = args[1];
+	String type = args[1].toLowerCase();
 	int run = Integer.parseInt(args[2]);
 	int cycles = Integer.parseInt(args[3]);
 	String outfn = args[4];
-	boolean isRank = args[5].equals("yes") ? true : false;
+	boolean isRank = args[5].toLowerCase().equals("yes") ? true : false;
+	int probVer = Integer.parseInt(args[6]); // 1 -> version 1, 2 -> version 2, others -> none
+	
+	/* error handling */
+	if (isRank && type.equals("ra")) {
+	    System.err.println("Cannot run rank function under ra mode");
+	    return;
+	} 
+	
+	/* error handling */
+	if (probVer == 1 || probVer == 2) {
+	    if (isRank) {
+		System.err.println("Cannot have probability when using rank");
+		return;
+	    } else if (type.equals("ca")) {
+		System.err.println("Cannot have probability under ca mode");
+		return;
+	    }
+	}
 	
 
-	sim.readFile(infn);
-
+	sim.readFile(infn, isRank, probVer);
 	PrintWriter out;
 
 	try {
@@ -48,7 +67,7 @@ public class Simulator {
 		System.out.println("Run #" + i);
 		// run simulation
 		if (type.equals("ra")) {
-		    sim.raSim(cycles);
+		    sim.raSim(cycles, probVer);
 		} else if (type.equals("ca")) {
 		    sim.caSim(cycles, isRank);
 		} else {
@@ -64,7 +83,6 @@ public class Simulator {
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
-
     }
 
     public void resetEle() {
@@ -96,19 +114,25 @@ public class Simulator {
 	}
     }
 
-    public void raSim(int cycles) {
-	Utility.raSimulation(cycles, eleList, ruleList, eleMap);
+    public void raSim(int cycles, int probVer) {
+	Utility.raSimulation(cycles, eleList, ruleList, eleMap, probVer, accProb, orderRuleLst);
     }
     
     public void caSim(int cycles, boolean isRank) {
 	Utility.caSimulation(cycles, isRank, eleList, ruleList, eleMap, rankRuleLst);
     }
 
-    public void readFile(String infn) {
+    public void readFile(String infn, boolean isRank, int probVer) {
+	
+	if (probVer == 1 || probVer == 2) {
+	    accProb = new ArrayList <Double> ();
+	    orderRuleLst = new ArrayList <ExecRules>();
+	}
+	
 	try {
 	    BufferedReader br = new BufferedReader(new FileReader(infn));
 	    Utility.parseElements(eleList, br, eleMap);
-	    Utility.parseRules(ruleList, br, rankRuleLst);
+	    Utility.parseRules(ruleList, br, rankRuleLst, isRank, probVer, accProb, orderRuleLst);
 	} catch (FileNotFoundException e) {
 	    e.printStackTrace();
 	}
