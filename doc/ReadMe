@@ -5,15 +5,15 @@ under src/: javac *.java
 B. Usage: 
 
 under src/: 
-java Simulator [input file] [type: ra|ca] [runs] [cycle] [output file] [isRank] [probability version] [options: output short]
+java Simulator [input file] [type: ra|ca] [runs] [cycle] [output file] [isRank] [probability version] [options: -whole]
 
 Examples:
 
 java Simulator model.txt ra 100 20 out.txt yes 0 
 java Simulator model.txt ra 100 20 out.txt no 1
-java Simulator model.txt ca 100 20 out.txt yes 0 short
-java Simulator model.txt ca 100 20 out.txt yes 0
-java Simulator model.txt ca 100 20 out.txt no 0 short
+java Simulator model.txt ca 100 20 out.txt yes 0 -whole
+java Simulator model.txt ca 100 20 out.txt yes 0 -whole
+java Simulator model.txt ca 100 20 out.txt no 0 
 
 ***Some rules about the usage***
 (1) isRank: can only take on two values: yes and no (case insensitive) and only supports ca mode
@@ -21,8 +21,8 @@ java Simulator model.txt ca 100 20 out.txt no 0 short
 (2) probability version: can only take on three values as of now: 0, 1, and 2 (will explain this later, should discuss with Natasa about mode 2)
     ***If the value is nonzero then the isRank MUST set to no, and the type MUST set to ra***
 
-(3) output mode: this field is option and will only be checked if the mode is set to ca and this
-    field can only take on two values: yes and no (case insensitive)
+(3) -whole (case insensitive): it means the output will show every timestamp of each element instead of every round.
+    This option will only be checked if the mode is set to ca
     ***Haven't supported yet***
 
 C. Guidlines of the format of the input file:

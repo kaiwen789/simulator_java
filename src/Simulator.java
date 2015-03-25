@@ -26,7 +26,7 @@ public class Simulator {
 
 	if (args.length < 7) {
 	    System.out.println(
-		    "Usage: java Simulator [input file] [type: ra|ca] [runs] [cycle] [output file] [isRank] [probability version] [output mode]");
+		    "Usage: java Simulator [input file] [type: ra|ca] [runs] [cycle] [output file] [isRank] [probability version] [option: output mode]");
 	    return;
 	}
 	Simulator sim = new Simulator();
