@@ -96,8 +96,11 @@ public class Simulator {
 	    StringBuilder line = new StringBuilder();
 	    line.append(element.getName()).append(" ");
 	    List<Integer> accumSeries = element.getAccSeries();
-	    for (Integer val : accumSeries)
-		line.append(val).append(" ");
+	    for (int a = 0; a < accumSeries.size(); a++) {
+		line.append(accumSeries.get(a)).append(" ");
+	    }
+//	    for (Integer val : accumSeries)
+//		line.append(val).append(" ");
 	    out.println(line.substring(0, line.length() - 1));
 	}
     }

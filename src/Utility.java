@@ -41,8 +41,9 @@ public class Utility {
 	
 	try {
 	    while ((line = br.readLine()) != null) {
+		if (line.length() == 0) // read empty lines
+		    continue;
 		line = line.trim();
-		
 		if (probVer == 1) { // only implement first version of prob 
 		   int pos = line.indexOf(";");
 		   if (pos < 0)
@@ -57,16 +58,13 @@ public class Utility {
 		       System.exit(-1);
 		   }
 		   accumProb += Double.parseDouble(tmp);
-		   if (accumProb > 1) {//the accumProb should be less than or equal to 1
+		   if (accumProb - 1 > 0.01) {//the accumProb should be less than or equal to 1
+		       System.out.println(accumProb);
 		       System.err.println("Accumulated probability exceeds 1!!!");
 		       System.exit(-1);
 		   }
 		   line = line.substring(0, pos + 1);
 		}
-		
-		if (line.length() == 0) // read empty lines
-		    continue;
-		
 		/*
 		 * 1. 10: v1 = something v 
 		 * 2. 10: {} 
@@ -158,7 +156,7 @@ public class Utility {
 	    e.printStackTrace();
 	} 
 	if (probVer == 1) {
-	    if (accumProb != 1.0) {
+	    if (accumProb - 1 > 0.005) {
 		System.err.println("The sum of probabilities is not equla to 1!");
 		System.exit(-1);
 	    }
