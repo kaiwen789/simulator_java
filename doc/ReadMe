@@ -5,14 +5,14 @@ under src/: javac *.java
 B. Usage: 
 
 under src/: 
-java Simulator [input file] [type: ra|ca] [runs] [cycle] [output file] [isRank] [probability version] [options: -whole]
+java Simulator [input file] [type: ra|ca] [runs] [cycle] [output file] [isRank] [probability version] [option: output mode]
 
 Examples:
 
-java Simulator model.txt ra 100 20 out.txt yes 0 
+java Simulator model.txt ra 100 20 out.txt yes 0 1
 java Simulator model.txt ra 100 20 out.txt no 1
-java Simulator model.txt ca 100 20 out.txt yes 0 -whole
-java Simulator model.txt ca 100 20 out.txt yes 0 -whole
+java Simulator model.txt ca 100 20 out.txt yes 0 2
+java Simulator model.txt ca 100 20 out.txt yes 0 
 java Simulator model.txt ca 100 20 out.txt no 0 
 
 ***Some rules about the usage***
@@ -21,9 +21,7 @@ java Simulator model.txt ca 100 20 out.txt no 0
 (2) probability version: can only take on three values as of now: 0, 1, and 2 (will explain this later, should discuss with Natasa about mode 2)
     ***If the value is nonzero then the isRank MUST set to no, and the type MUST set to ra***
 
-(3) -whole (case insensitive): it means the output will show every timestamp of each element instead of every round.
-    This option will only be checked if the mode is set to ca
-    ***Haven't supported yet***
+(3) Output mode specifies the format of the output trace file. 1 is the standard output mode, 2 is the output mode for model checker, and 3 is frequency-only version
 
 C. Guidlines of the format of the input file:
 (1) Initialization of the elements goes first then followed by a list of rules. (Should be separated by the keyword: "Rules:")
