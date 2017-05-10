@@ -40,6 +40,15 @@ public class Simulator {
 		int probVer = Integer.parseInt(args[6]); // 1 -> version 1, 2 -> version
 													// 2, others -> none
 
+		int simMode;  //  1: Original Version 	2: Model Checker 	3: Summary Only
+		if (args.length < 8) {
+			simMode = 1;
+		} else {
+			simMode = Integer.parseInt(args[7]);
+		}
+
+
+
 		/* error handling */
 		if (isRank && type.equals("ra")) {
 			System.err.println("Cannot run rank function under ra mode");
@@ -62,12 +71,15 @@ public class Simulator {
 
 		try {
 			out = new PrintWriter(outfn, "UTF-8");
-// The following couple of lines have been commented out for the purpose of creating output for the model checker.
-//			out.println(outfn + " succeeded with " + run + " runs of " + cycles
-//					+ " Cycles each.");
-//			out.println();
+			if (simMode == 1) {
+				out.println(outfn + " succeeded with " + run + " runs of " + cycles
+						+ " Cycles each.");
+				out.println();
+			}
 			for (int i = 0; i < run; i++) {
-				//System.out.println("Run #" + i);
+				if (simMode == 1) {
+					System.out.println("Run #" + i);
+				}
 				// run simulation
 				if (type.equals("ra")) {
 					sim.raSim(cycles, probVer);
@@ -77,11 +89,17 @@ public class Simulator {
 					System.err.println("Wrong type!");
 					return;
 				}
-				sim.writeOutRunBLTLForm(i, out, cycles);; // write to the output
+				if (simMode == 1) {
+					sim.writeOutRun(i, out); // write to the output
+				} else if (simMode == 2){
+					sim.writeOutRunBLTLForm(i, out, cycles);
+				}
 				if (i != run - 1)
 					sim.resetEle(); // reset element
 			}
-//			sim.printSummary(out);
+			if(simMode != 2) {
+				sim.printSummary(out);
+			}
 			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -108,6 +126,7 @@ public class Simulator {
 		}
 	}
 
+	// Regular output
 	public void writeOutRun(int run, PrintWriter out) {
 		out.println("Run #" + run);
 		for (Element element : eleList) {
@@ -119,10 +138,8 @@ public class Simulator {
 			out.println(line.substring(0, line.length() - 1));
 		}
 	}
-	
-	// This particular method writes the output in a column based format that is suitable for 
-	// the BooleanNet statistical model checker made by Paolo Zuliani and Ed. Clarke's group.
-	
+
+	// Output for model checker
 	public void writeOutRunBLTLForm(int run, PrintWriter out, int cycles){
 		if(run == 0){
 			StringBuilder line = new StringBuilder();
@@ -130,19 +147,21 @@ public class Simulator {
 			for (Element element : eleList){
 				line.append(element.getName()).append(" ");
 			}
-			out.println(line.substring(0, line.length()-1));
+			line.append("step");
+			//out.println(line.substring(0, line.length()-1));
+			out.println(line);
 		}
-//		out.println("Run #" + run);
 		for(int i = 0; i < cycles; i++){
 			StringBuilder line = new StringBuilder();
 			line.append(i).append("  ");
 			for (Element element : eleList){
 				line.append(element.getRoundSeries().get(i)).append(" ");
-			}	
-			out.println(line.substring(0, line.length() - 1));
+			}
+			line.append(i); // Output the step for model checker
+			//out.println(line.substring(0, line.length() - 1));
+			out.println(line);
 		}
 	}
-
 
 	public void raSim(int cycles, int probVer) {
 		Utility.raSimulation(cycles, eleList, ruleList, eleMap, probVer,
