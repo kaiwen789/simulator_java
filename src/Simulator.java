@@ -62,11 +62,12 @@ public class Simulator {
 
 		try {
 			out = new PrintWriter(outfn, "UTF-8");
-			out.println(outfn + " succeeded with " + run + " runs of " + cycles
-					+ " Cycles each.");
-			out.println();
+// The following couple of lines have been commented out for the purpose of creating output for the model checker.
+//			out.println(outfn + " succeeded with " + run + " runs of " + cycles
+//					+ " Cycles each.");
+//			out.println();
 			for (int i = 0; i < run; i++) {
-				System.out.println("Run #" + i);
+				//System.out.println("Run #" + i);
 				// run simulation
 				if (type.equals("ra")) {
 					sim.raSim(cycles, probVer);
@@ -76,11 +77,11 @@ public class Simulator {
 					System.err.println("Wrong type!");
 					return;
 				}
-				sim.writeOutRun(i, out); // write to the output
+				sim.writeOutRunBLTLForm(i, out, cycles);; // write to the output
 				if (i != run - 1)
 					sim.resetEle(); // reset element
 			}
-			sim.printSummary(out);
+//			sim.printSummary(out);
 			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -118,6 +119,30 @@ public class Simulator {
 			out.println(line.substring(0, line.length() - 1));
 		}
 	}
+	
+	// This particular method writes the output in a column based format that is suitable for 
+	// the BooleanNet statistical model checker made by Paolo Zuliani and Ed. Clarke's group.
+	
+	public void writeOutRunBLTLForm(int run, PrintWriter out, int cycles){
+		if(run == 0){
+			StringBuilder line = new StringBuilder();
+			line.append("# time ");
+			for (Element element : eleList){
+				line.append(element.getName()).append(" ");
+			}
+			out.println(line.substring(0, line.length()-1));
+		}
+//		out.println("Run #" + run);
+		for(int i = 0; i < cycles; i++){
+			StringBuilder line = new StringBuilder();
+			line.append(i).append("  ");
+			for (Element element : eleList){
+				line.append(element.getRoundSeries().get(i)).append(" ");
+			}	
+			out.println(line.substring(0, line.length() - 1));
+		}
+	}
+
 
 	public void raSim(int cycles, int probVer) {
 		Utility.raSimulation(cycles, eleList, ruleList, eleMap, probVer,
